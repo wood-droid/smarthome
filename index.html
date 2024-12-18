@@ -112,9 +112,25 @@
             background-color: #f8f9fa;
             border-radius: 5px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        .orange {
+        .skills ul li span.orange {
             color: orange;
+        }
+        .skills ul li span.blue {
+            color: blue;
+        }
+        .remove-btn {
+            background: none;
+            border: none;
+            color: red;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .remove-btn:hover {
+            color: darkred;
         }
     </style>
 </head>
@@ -125,9 +141,7 @@
             To get started, pick an input sensor, output device, and processing steps to complete a device.
         </div>
         
-        <!-- Section Wrapper -->
         <div class="section-wrapper">
-            <!-- Input Section -->
             <div class="section-box input-box">
                 <span class="section-title input-title">Input</span>
                 <div>
@@ -150,8 +164,6 @@
                     </select>
                 </div>
             </div>
-            
-            <!-- Output Section -->
             <div class="section-box output-box">
                 <span class="section-title output-title">Output</span>
                 <div>
@@ -176,16 +188,15 @@
                     </select>
                 </div>
             </div>
-            
-            <!-- Processing Section -->
             <div class="section-box processing-box">
                 <span class="section-title processing-title">Processing</span>
                 <div class="statement" id="condition-statement">
-                    If <span class="orange">[Input Device]</span> reports <span class="orange">[input]</span>, then <span class="orange">[Output Device]</span> is set to <span class="orange">[Action]</span>.
+                    If <span class="orange">[Input Device]</span> reports <span class="orange">[input]</span>, 
+                    then <span class="blue">[Output Device]</span> is set to <span class="blue">[Action]</span>.
                 </div>
             </div>
         </div>
-        
+
         <div class="buttons">
             <button onclick="createSkill()">Create Skill</button>
             <button onclick="addToHouse()">Add to your House</button>
@@ -232,8 +243,8 @@
             const statement = `
                 If <span class="orange">${inputDevice || "[Input Device]"}</span> reports 
                 <span class="orange">${inputCondition || "[input]"}</span>, 
-                then <span class="orange">${outputDevice || "[Output Device]"}</span> is set to 
-                <span class="orange">${action || "[Action]"}</span>.`;
+                then <span class="blue">${outputDevice || "[Output Device]"}</span> is set to 
+                <span class="blue">${action || "[Action]"}</span>.`;
 
             document.getElementById('condition-statement').innerHTML = statement;
         }
@@ -249,6 +260,13 @@
 
             const skillItem = document.createElement('li');
             skillItem.innerHTML = statement;
+
+            const removeBtn = document.createElement('button');
+            removeBtn.textContent = "x";
+            removeBtn.classList.add('remove-btn');
+            removeBtn.onclick = () => skillItem.remove();
+
+            skillItem.appendChild(removeBtn);
             skillsList.appendChild(skillItem);
 
             resetDropdowns();
