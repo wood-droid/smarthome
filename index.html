@@ -112,25 +112,9 @@
             background-color: #f8f9fa;
             border-radius: 5px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
-        .skills ul li span.orange {
+        .orange {
             color: orange;
-        }
-        .skills ul li span.blue {
-            color: blue;
-        }
-        .remove-btn {
-            background: none;
-            border: none;
-            color: red;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        .remove-btn:hover {
-            color: darkred;
         }
     </style>
 </head>
@@ -141,15 +125,23 @@
             To get started, pick an input sensor, output device, and processing steps to complete a device.
         </div>
         
+        <!-- Section Wrapper -->
         <div class="section-wrapper">
+            <!-- Input Section -->
             <div class="section-box input-box">
                 <span class="section-title input-title">Input</span>
                 <div>
                     <label for="input-device">Input Device: </label>
                     <select id="input-device" onchange="updateInputOptions(); updateStatement();">
-    <option value="">Loading Inputs...</option>
-</select>
-
+                        <option value="">Select Input</option>
+                        <option value="Light Sensor">Light Sensor</option>
+                        <option value="Hydration Sensor">Hydration Sensor</option>
+                        <option value="Thermometer">Thermometer</option>
+                        <option value="Indoor Motion Sensor">Indoor Motion Sensor</option>
+                        <option value="Outdoor Motion Sensor">Outdoor Motion Sensor</option>
+                        <option value="Smoke Detector">Smoke Detector</option>
+                        <option value="Phone App">Phone App</option>
+                    </select>
                 </div>
                 <div>
                     <label for="input-condition">Condition: </label>
@@ -158,6 +150,8 @@
                     </select>
                 </div>
             </div>
+            
+            <!-- Output Section -->
             <div class="section-box output-box">
                 <span class="section-title output-title">Output</span>
                 <div>
@@ -182,15 +176,16 @@
                     </select>
                 </div>
             </div>
+            
+            <!-- Processing Section -->
             <div class="section-box processing-box">
                 <span class="section-title processing-title">Processing</span>
                 <div class="statement" id="condition-statement">
-                    If <span class="orange">[Input Device]</span> reports <span class="orange">[input]</span>, 
-                    then <span class="blue">[Output Device]</span> is set to <span class="blue">[Action]</span>.
+                    If <span class="orange">[Input Device]</span> reports <span class="orange">[input]</span>, then <span class="orange">[Output Device]</span> is set to <span class="orange">[Action]</span>.
                 </div>
             </div>
         </div>
-
+        
         <div class="buttons">
             <button onclick="createSkill()">Create Skill</button>
             <button onclick="addToHouse()">Add to your House</button>
@@ -203,100 +198,14 @@
     </div>
 
     <script>
-        const inputConditions = {}; // Object to hold devices and their conditions
-
-// Function to fetch and parse the CSV file
-    const inputConditions = {
-        "Motion Sensor": ["Motion Detected", "No Motion"],
-        "Door Sensor": ["Door Open", "Door Closed"],
-        "Temperature Sensor": ["Above 25°C", "Below 18°C"],
-        "Light Sensor": ["Bright", "Dark"],
-        "Smoke Detector": ["Smoke Detected", "No Smoke"]
-    };
-
-    // Populate input devices dropdown
-    function populateInputDropdown() {
-        const inputDropdown = document.getElementById('input-device');
-        inputDropdown.innerHTML = "<option value=''>Select Input</option>";
-
-        for (const device in inputConditions) {
-            const option = document.createElement('option');
-            option.value = device;
-            option.textContent = device;
-            inputDropdown.appendChild(option);
-        }
-    }
-
-    // Update condition dropdown based on selected input device
-    function updateInputOptions() {
-        const inputDevice = document.getElementById('input-device').value;
-        const inputConditionDropdown = document.getElementById('input-condition');
-        inputConditionDropdown.innerHTML = "<option value=''>Select Condition</option>";
-
-        if (inputDevice && inputConditions[inputDevice]) {
-            inputConditions[inputDevice].forEach(condition => {
-                const option = document.createElement('option');
-                option.value = condition;
-                option.textContent = condition;
-                inputConditionDropdown.appendChild(option);
-            });
-        }
-    }
-
-    function updateStatement() {
-        const inputDevice = document.getElementById('input-device').value;
-        const inputCondition = document.getElementById('input-condition').value;
-        const outputDevice = document.getElementById('output-device').value;
-        const action = document.getElementById('on-off').value;
-
-        const statement = `
-            If <span class="orange">${inputDevice || "[Input Device]"}</span> reports 
-            <span class="orange">${inputCondition || "[input]"}</span>, 
-            then <span class="blue">${outputDevice || "[Output Device]"}</span> is set to 
-            <span class="blue">${action || "[Action]"}</span>.`;
-
-        document.getElementById('condition-statement').innerHTML = statement;
-    }
-
-    window.onload = function() {
-        populateInputDropdown();
-        updateStatement();
-    };
-
-}
-
-// Populate input devices dropdown
-function populateInputDropdown() {
-    const inputDropdown = document.getElementById('input-device');
-    inputDropdown.innerHTML = "<option value=''>Select Input</option>";
-
-    for (const device in inputConditions) {
-        const option = document.createElement('option');
-        option.value = device;
-        option.textContent = device;
-        inputDropdown.appendChild(option);
-    }
-}
-
-// Update condition dropdown based on selected input device
-function updateInputOptions() {
-    const inputDevice = document.getElementById('input-device').value;
-    const inputConditionDropdown = document.getElementById('input-condition');
-    inputConditionDropdown.innerHTML = "<option value=''>Select Condition</option>";
-
-    if (inputDevice && inputConditions[inputDevice]) {
-        inputConditions[inputDevice].forEach(condition => {
-            const option = document.createElement('option');
-            option.value = condition;
-            option.textContent = condition;
-            inputConditionDropdown.appendChild(option);
-        });
-    }
-}
-
-// Call the function to load devices when the page loads
-window.onload = loadInputDevices;
-
+        const inputConditions = {
+            "Light Sensor": ["light", "dark"],
+            "Hydration Sensor": ["moist soil", "dry soil"],
+            "Thermometer": ["above 70 degrees", "below 70 degrees"],
+            "Indoor Motion Sensor": ["movement in house", "no movement"],
+            "Outdoor Motion Sensor": ["movement outside house", "no movement"],
+            "Smoke Detector": ["detected smoke", "not detecting smoke"],
+            "Phone App": ["Vacuum On", "Vacuum Off"]
         };
 
         function updateInputOptions() {
@@ -323,8 +232,8 @@ window.onload = loadInputDevices;
             const statement = `
                 If <span class="orange">${inputDevice || "[Input Device]"}</span> reports 
                 <span class="orange">${inputCondition || "[input]"}</span>, 
-                then <span class="blue">${outputDevice || "[Output Device]"}</span> is set to 
-                <span class="blue">${action || "[Action]"}</span>.`;
+                then <span class="orange">${outputDevice || "[Output Device]"}</span> is set to 
+                <span class="orange">${action || "[Action]"}</span>.`;
 
             document.getElementById('condition-statement').innerHTML = statement;
         }
@@ -340,13 +249,6 @@ window.onload = loadInputDevices;
 
             const skillItem = document.createElement('li');
             skillItem.innerHTML = statement;
-
-            const removeBtn = document.createElement('button');
-            removeBtn.textContent = "x";
-            removeBtn.classList.add('remove-btn');
-            removeBtn.onclick = () => skillItem.remove();
-
-            skillItem.appendChild(removeBtn);
             skillsList.appendChild(skillItem);
 
             resetDropdowns();
