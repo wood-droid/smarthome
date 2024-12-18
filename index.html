@@ -206,22 +206,63 @@
         const inputConditions = {}; // Object to hold devices and their conditions
 
 // Function to fetch and parse the CSV file
-async function loadInputDevices() {
-    try {
-        const response = await fetch('Input devices.csv); // File path to your CSV
-        const csvData = await response.text();
+    const inputConditions = {
+        "Motion Sensor": ["Motion Detected", "No Motion"],
+        "Door Sensor": ["Door Open", "Door Closed"],
+        "Temperature Sensor": ["Above 25°C", "Below 18°C"],
+        "Light Sensor": ["Bright", "Dark"],
+        "Smoke Detector": ["Smoke Detected", "No Smoke"]
+    };
 
-        // Parse CSV data
-        const rows = csvData.trim().split('\n').slice(1); // Skip header
-        rows.forEach(row => {
-            const [device, conditions] = row.split(',');
-            inputConditions[device.trim()] = conditions.split(';').map(c => c.trim());
-        });
+    // Populate input devices dropdown
+    function populateInputDropdown() {
+        const inputDropdown = document.getElementById('input-device');
+        inputDropdown.innerHTML = "<option value=''>Select Input</option>";
 
-        populateInputDropdown(); // Fill the Input Device dropdown
-    } catch (error) {
-        console.error("Error loading input devices:", error);
+        for (const device in inputConditions) {
+            const option = document.createElement('option');
+            option.value = device;
+            option.textContent = device;
+            inputDropdown.appendChild(option);
+        }
     }
+
+    // Update condition dropdown based on selected input device
+    function updateInputOptions() {
+        const inputDevice = document.getElementById('input-device').value;
+        const inputConditionDropdown = document.getElementById('input-condition');
+        inputConditionDropdown.innerHTML = "<option value=''>Select Condition</option>";
+
+        if (inputDevice && inputConditions[inputDevice]) {
+            inputConditions[inputDevice].forEach(condition => {
+                const option = document.createElement('option');
+                option.value = condition;
+                option.textContent = condition;
+                inputConditionDropdown.appendChild(option);
+            });
+        }
+    }
+
+    function updateStatement() {
+        const inputDevice = document.getElementById('input-device').value;
+        const inputCondition = document.getElementById('input-condition').value;
+        const outputDevice = document.getElementById('output-device').value;
+        const action = document.getElementById('on-off').value;
+
+        const statement = `
+            If <span class="orange">${inputDevice || "[Input Device]"}</span> reports 
+            <span class="orange">${inputCondition || "[input]"}</span>, 
+            then <span class="blue">${outputDevice || "[Output Device]"}</span> is set to 
+            <span class="blue">${action || "[Action]"}</span>.`;
+
+        document.getElementById('condition-statement').innerHTML = statement;
+    }
+
+    window.onload = function() {
+        populateInputDropdown();
+        updateStatement();
+    };
+
 }
 
 // Populate input devices dropdown
