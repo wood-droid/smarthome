@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Home Simulator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #d0e7f9;
+            color: #333;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            margin-top: 50px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #004e92;
+        }
+        .text-box {
+            margin: 20px 0;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        .section-wrapper {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .section-box {
+            flex: 1;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .input-box {
+            border: 2px solid orange;
+        }
+        .output-box {
+            border: 2px solid blue;
+        }
+        .processing-box {
+            border: 2px solid purple;
+        }
+        .section-title {
+            margin-top: -25px;
+            display: inline-block;
+            background-color: #fff;
+            padding: 0 10px;
+            font-weight: bold;
+        }
+        .input-title {
+            color: orange;
+        }
+        .output-title {
+            color: blue;
+        }
+        .processing-title {
+            color: purple;
+        }
+        select {
+            padding: 10px;
+            font-size: 16px;
+            margin: 5px 0;
+            width: 90%;
+        }
+        .statement {
+            font-size: 18px;
+            font-weight: bold;
+            color: #004e92;
+        }
+        .buttons {
+            margin-top: 20px;
+        }
+        .buttons button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: #fff;
+        }
+        .buttons button:hover {
+            background-color: #0056b3;
+        }
+        .skills {
+            margin-top: 30px;
+            text-align: left;
+            width: 80%;
+            margin: 0 auto;
+        }
+        .skills h2 {
+            color: #333;
+        }
+        .skills ul {
+            list-style: none;
+            padding: 0;
+        }
+        .skills ul li {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .skills ul li span.orange {
+            color: orange;
+        }
+        .skills ul li span.blue {
+            color: blue;
+        }
+        .remove-btn {
+            background: none;
+            border: none;
+            color: red;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .remove-btn:hover {
+            color: darkred;
+        }
+    </style>
+</head>
+<body>
+    <h1>Smart Home Simulator</h1>
+    <div class="container">
+        <div class="text-box">
+            To get started, pick an input sensor, output device, and processing steps to complete a device.
+        </div>
+        
+        <div class="section-wrapper">
+            <div class="section-box input-box">
+                <span class="section-title input-title">Input</span>
+                <div>
+                    <label for="input-device">Input Device: </label>
+                    <select id="input-device" onchange="updateInputOptions(); updateStatement();">
+    <option value="">Loading Inputs...</option>
+</select>
+
+                </div>
+                <div>
+                    <label for="input-condition">Condition: </label>
+                    <select id="input-condition" onchange="updateStatement()">
+                        <option value="">Select Condition</option>
+                    </select>
+                </div>
+            </div>
+            <div class="section-box output-box">
+                <span class="section-title output-title">Output</span>
+                <div>
+                    <label for="output-device">Output Device: </label>
+                    <select id="output-device" onchange="updateStatement()">
+                        <option value="">Select Output</option>
+                        <option value="Dog Feeder">Dog Feeder</option>
+                        <option value="Heater">Heater</option>
+                        <option value="Air Conditioning">Air Conditioning</option>
+                        <option value="Indoor Lights">Indoor Lights</option>
+                        <option value="Doorbell Camera">Doorbell Camera</option>
+                        <option value="Sprinkler System">Sprinkler System</option>
+                        <option value="Vacuum Cleaner">Vacuum Cleaner</option>
+                        <option value="Siren">Siren</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="on-off">Action: </label>
+                    <select id="on-off" onchange="updateStatement()">
+                        <option value="On">On</option>
+                        <option value="Off">Off</option>
+                    </select>
+                </div>
+            </div>
+            <div class="section-box processing-box">
+                <span class="section-title processing-title">Processing</span>
+                <div class="statement" id="condition-statement">
+                    If <span class="orange">[Input Device]</span> reports <span class="orange">[input]</span>, 
+                    then <span class="blue">[Output Device]</span> is set to <span class="blue">[Action]</span>.
+                </div>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button onclick="createSkill()">Create Skill</button>
+            <button onclick="addToHouse()">Add to your House</button>
+        </div>
+    </div>
+
+    <div class="skills">
+        <h2>Programmed Skills</h2>
+        <ul id="skills-list"></ul>
+    </div>
+
+    <script>
+        const inputConditions = {}; // Object to hold devices and their conditions
+
+// Function to fetch and parse the CSV file
+async function loadInputDevices() {
+    try {
+        const response = await fetch('Input devices.csv); // File path to your CSV
+        const csvData = await response.text();
+
+        // Parse CSV data
+        const rows = csvData.trim().split('\n').slice(1); // Skip header
+        rows.forEach(row => {
+            const [device, conditions] = row.split(',');
+            inputConditions[device.trim()] = conditions.split(';').map(c => c.trim());
+        });
+
+        populateInputDropdown(); // Fill the Input Device dropdown
+    } catch (error) {
+        console.error("Error loading input devices:", error);
+    }
+}
+
+// Populate input devices dropdown
+function populateInputDropdown() {
+    const inputDropdown = document.getElementById('input-device');
+    inputDropdown.innerHTML = "<option value=''>Select Input</option>";
+
+    for (const device in inputConditions) {
+        const option = document.createElement('option');
+        option.value = device;
+        option.textContent = device;
+        inputDropdown.appendChild(option);
+    }
+}
+
+// Update condition dropdown based on selected input device
+function updateInputOptions() {
+    const inputDevice = document.getElementById('input-device').value;
+    const inputConditionDropdown = document.getElementById('input-condition');
+    inputConditionDropdown.innerHTML = "<option value=''>Select Condition</option>";
+
+    if (inputDevice && inputConditions[inputDevice]) {
+        inputConditions[inputDevice].forEach(condition => {
+            const option = document.createElement('option');
+            option.value = condition;
+            option.textContent = condition;
+            inputConditionDropdown.appendChild(option);
+        });
+    }
+}
+
+// Call the function to load devices when the page loads
+window.onload = loadInputDevices;
+
+        };
+
+        function updateInputOptions() {
+            const inputDevice = document.getElementById('input-device').value;
+            const inputConditionDropdown = document.getElementById('input-condition');
+            inputConditionDropdown.innerHTML = "<option value=''>Select Condition</option>";
+
+            if (inputDevice && inputConditions[inputDevice]) {
+                inputConditions[inputDevice].forEach(condition => {
+                    const option = document.createElement('option');
+                    option.value = condition;
+                    option.textContent = condition;
+                    inputConditionDropdown.appendChild(option);
+                });
+            }
+        }
+
+        function updateStatement() {
+            const inputDevice = document.getElementById('input-device').value;
+            const inputCondition = document.getElementById('input-condition').value;
+            const outputDevice = document.getElementById('output-device').value;
+            const action = document.getElementById('on-off').value;
+
+            const statement = `
+                If <span class="orange">${inputDevice || "[Input Device]"}</span> reports 
+                <span class="orange">${inputCondition || "[input]"}</span>, 
+                then <span class="blue">${outputDevice || "[Output Device]"}</span> is set to 
+                <span class="blue">${action || "[Action]"}</span>.`;
+
+            document.getElementById('condition-statement').innerHTML = statement;
+        }
+
+        function createSkill() {
+            const statement = document.getElementById('condition-statement').innerHTML;
+            const skillsList = document.getElementById('skills-list');
+
+            if (statement.includes("[Input Device]") || statement.includes("[input]") || statement.includes("[Output Device]") || statement.includes("[Action]")) {
+                alert("Please complete all selections before creating a skill.");
+                return;
+            }
+
+            const skillItem = document.createElement('li');
+            skillItem.innerHTML = statement;
+
+            const removeBtn = document.createElement('button');
+            removeBtn.textContent = "x";
+            removeBtn.classList.add('remove-btn');
+            removeBtn.onclick = () => skillItem.remove();
+
+            skillItem.appendChild(removeBtn);
+            skillsList.appendChild(skillItem);
+
+            resetDropdowns();
+        }
+
+        function resetDropdowns() {
+            document.getElementById('input-device').value = "";
+            document.getElementById('input-condition').innerHTML = "<option value=''>Select Condition</option>";
+            document.getElementById('output-device').value = "";
+            document.getElementById('on-off').value = "On";
+            updateStatement();
+        }
+
+        function addToHouse() {
+            alert("Navigating to house setup... (this will load a new screen in the next version)");
+        }
+    </script>
+</body>
+</html>
